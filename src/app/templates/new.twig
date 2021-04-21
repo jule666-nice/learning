@@ -1,0 +1,56 @@
+{% include 'base.html' %}
+<script>
+var stu_datatable = {
+	 	 view:"datatable",
+          id:"stu_ichiran",      
+      columns:[
+        {id:"stu_id", header:"学籍番号"},
+        {id:"stu_name", header:"名前"},
+        {id:"stu_sex", header:"性別"},
+        {id:"stu_birthday", header:"誕生日"},
+      ]
+	};
+
+var testkekka_datatable = {
+	 	 view:"datatable",
+          id:"kekka_ichiran",      
+      columns:[
+        {id:"stu_id", header:"学籍番号"},
+        {id:"stu_name", header:"名前"},
+        {id:"kokugo_point", header:"国語"},
+        {id:"eigo_point", header:"英語"},
+        {id:"suugaku_point", header:"数学"},
+      ]
+	};
+var checkbox = {view:"checkbox", 
+    id:"change", 
+    label:"全表示", 
+    value:0}
+
+var logic = {
+		init: function() {
+			$.get("ApiStudent", "", function(data) {
+				//console.log(data);
+                var jsondata = JSON.parse(data);
+				$$("stu_ichiran").parse(jsondata.stu_data);
+                $$("kekka_ichiran").parse(jsondata.testkekka_data);
+			});
+
+		},
+};
+
+webix.ready(function () {
+		webix.ui(
+			{cols:[
+				stu_datatable,
+                testkekka_datatable,
+                checkbox
+			]}
+		);
+		logic.init();
+});
+
+ </script >
+
+
+

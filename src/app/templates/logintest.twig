@@ -1,0 +1,93 @@
+{% include 'base.html' %}
+<script >
+	var tabbar = {
+	  view:"tabbar", 
+	  id: "tabbar", 
+	  multiview:true, 
+	  options: [
+	    {value: "Login", id: "login"},
+	    {value: "Sign Up", id: "signUp"},
+	  ]
+	};
+	var loginForm = {
+		view:"form",
+		id:"loginForm",
+		borderless:true,
+        elements:[
+            {cols:[
+            	{},
+            	{width:340, rows:[
+            		{view:"label", label:"UserName"},
+	            	{view:"text", id:"user_name", name:"user_name", label:" ", labelWidth:10},
+            		{view:"label", label:"Password"},
+	            	{view:"text", id:"password", name:"password", label:" ", type:"Password", labelWidth:10},
+	            	{view:"label" , label:"<a href='/changepw'>Forgot password</a>", align:"right"},
+	            	{cols:[
+	            		{view:"button", value:"Login", css:"webix_primary", id:"login", height:50},
+	            	]},
+            	]},
+            	{}
+            ]},
+        ]};
+    var signUpForm = {
+    	view:"form",
+    	id:"signUpForm",
+    	hidden:true,
+    	borderless:true,
+        elements:[
+        	{cols:[
+            	{},
+            	{width:340, rows:[
+            		{view:"label", label:"UserName"},
+	            	{view:"text", labelWidth:10},
+            		{view:"label", label:"Password"},
+	            	{view:"text", type:"Password", labelWidth:10},
+            		{view:"label", label:"ReType Password"},
+	            	{view:"text", type:"Password", labelWidth:10},
+	            	{cols:[
+	            		{view:"button", value:"Sign Up", css:"webix_primary"},
+	            	]},
+            	]},
+            	{}
+            ]},
+        ]};
+		
+	webix.ui(
+		{rows:[
+			tabbar,
+			loginForm,
+			signUpForm
+		]}
+	);
+	$$("tabbar").attachEvent("onItemClick", changeTab);
+	$$("login").attachEvent("onItemClick", login);
+	//ログイン／登録切り替え
+	function changeTab(){
+		var click = $$("tabbar").getValue();
+		if(click == "login"){
+			$$("signUpForm").hide();
+			$$("loginForm").show();
+		}else if(click == "signUp"){
+			$$("loginForm").hide();
+			$$("signUpForm").show();
+		}
+	};
+	//ログインボタン押下時
+	function login(){
+		var _user     = $$("user_name").getValue();
+		var _password = $$("password").getValue();
+		webix.message("login is clicked123xxx");
+		var post_data = {
+			"user_name": _user,
+			"password":_password
+		};
+		$.post("loginAuth", post_data, function(data) {
+			webix.message(data);
+			if (data != "false") {
+				webix.storage.session.remove('user_info', data);
+				webix.storage.session.put('user_info', data);
+				webix.send("/home", {}, "POST");
+			}
+		});
+	}        
+</script>

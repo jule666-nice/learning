@@ -1,0 +1,39 @@
+{% include 'base.html' %}
+<script >
+var changePwForm = {
+		view:"form",
+		id:"changepw",
+		borderless:true,
+        elements:[
+            {cols:[
+            	{},
+            	{width:340, rows:[
+            		{view:"label", label:"Password", },
+					{view:"text", name:"user_pw", label:" ", labelWidth:10},
+	            	{view:"label", label:"NewPassword" , id : "age"},
+					{view:"text", name:"user_npw", label:" ", labelWidth:10},
+            		{view:"label", label:"NewPasswordAgain", id : "sex"},
+					{view:"text",  name:"user_npwag", label:" ", labelWidth:10},
+	            	{cols:[
+                        {view:"button", value:"change", css:"webix_primary", id:"btnchangeinfo", height:50},
+                    ]},
+            	]},
+            	{}
+            ]},
+        ]};
+
+	webix.ui(
+		{rows:[
+			changePwForm
+		]}
+	);
+
+    $$("btnchangeinfo").attachEvent("onItemClick", changeInfo);
+	//change infomation
+	function changeInfo(){
+        webix.message("PASSWORD Has Changed!");
+
+	};
+
+
+</script >

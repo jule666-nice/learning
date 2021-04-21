@@ -1,0 +1,92 @@
+{% include 'base.html' %}
+<script >
+	var tabbar = {
+	  view:"tabbar", 
+	  id: "tabbar", 
+	  multiview:true, 
+	  options: [
+	    { value: "Login", id: "login"},
+	    { value: "Sign Up", id: "signUp"},
+	  ]
+	};
+	var loginForm = {
+		view:"form",
+		id:"loginForm",
+    	hidden:true,
+		borderless:true,
+        elements:[
+            {cols:[
+            	{},
+            	{width:340, rows:[
+            		{view:"label", label:"UserName"},
+	            	{view:"text", label:" ", labelWidth:10},
+            		{view:"label", label:"Password"},
+	            	{view:"text", label:" ", type:"Password", labelWidth:10},
+	            	{view:"label" , label:"<a href='https://www.google.com'>Forgot password</a>", align:"right"},
+	            	{cols:[
+	            		{view:"button", value:"Login", css:"webix_primary", id:"login"},
+	            	]},
+            	]},
+            	{}
+            ]},
+        ]};
+    var signUpForm = {
+    	view:"form",
+    	id:"signUpForm",
+    	borderless:true,
+        elements:[
+        	{cols:[
+            	{},
+            	{width:340, rows:[
+            		{view:"label", label:"UserName"},
+	            	{view:"text", labelWidth:10},
+            		{view:"label", label:"Password"},
+	            	{view:"text", type:"Password", labelWidth:10},
+            		{view:"label", label:"ReType Password"},
+	            	{view:"text", type:"Password", labelWidth:10},
+	            	{cols:[
+	            		{view:"button", value:"Sign Up", css:"webix_primary"},
+	            	]},
+            	]},
+            	{}
+            ]},
+        ]};
+	webix.ui(
+		{rows:[
+			tabbar,
+			loginForm,
+			signUpForm
+		]}
+	);
+	$$("tabbar").attachEvent("onItemClick", changeTab);
+	$$("login").attachEvent("onItemClick", login);
+	//ログイン／登録切り替え
+	function changeTab(){
+		var click = $$("tabbar").getValue();
+		if(click == "login"){
+			$$("signUpForm").hide();
+			$$("loginForm").show();
+		}else if(click == "signUp"){
+			$$("loginForm").hide();
+			$$("signUpForm").show();
+		}
+	};
+	//ログインボタン押下時
+	function login(){
+		webix.message("login is clicked123xxxxx");
+		jQuery.ajax({
+		    type: "POST",
+		    url: "loginAuth",
+		    dataType: "json",
+		    data: {functionName: "login_auth", arguments: [1, 2]},
+		    success: function (obj, textstatus) {
+              if( !("error" in obj) ) {
+                  yourVariable = obj.result;
+              }
+              else {
+                  console.log(obj.error);
+              }
+		    }
+		});
+	}        
+</script>
