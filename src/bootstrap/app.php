@@ -24,9 +24,9 @@ $container['view'] = function ($container) {
 $container['ApiLogin'] = function ($container) {
    return new \App\Api\ApiLogin($container->view);
 };
-$container['RunVideo'] = function ($container) {
-   return new \App\Api\RunVideo($container->view);
-};
+// $container['RunVideo'] = function ($container) {
+//    return new \App\Api\RunVideo($container->view);
+// };
 $container['ApiStudent'] = function ($container) {
    return new \App\Api\ApiStudent();
 };

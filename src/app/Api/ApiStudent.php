@@ -6,16 +6,16 @@ class ApiStudent
 	{
 		//学生マスタ情報
 		$student = [
-			['stu_id' => '20020001','stu_name' => 'AUNG','stu_sex' => '男性','stu_birthday' => '1998-05-21',],
-			['stu_id' => '20020002', 'stu_name' => 'Shou', 'stu_sex' => '男性', 'stu_birthday' => '1996-05-21', ],
-			['stu_id' => '20020003', 'stu_name' => 'CHOU', 'stu_sex' => '女性', 'stu_birthday' => '1999-07-11', ],
-			['stu_id' => '20020004', 'stu_name' => 'KANG', 'stu_sex' => '男性', 'stu_birthday' => '1998-01-11', ],
-			['stu_id' => '20020005', 'stu_name' => 'UMA', 'stu_sex' => '男性', 'stu_birthday' => '1998-02-17', ],
-			['stu_id' => '20020006', 'stu_name' => 'KIN', 'stu_sex' => '女性', 'stu_birthday' => '1998-03-25', ],
-			['stu_id' => '20020007', 'stu_name' => 'CHAO', 'stu_sex' => '男性', 'stu_birthday' => '1998-06-14', ],
-			['stu_id' => '20020008', 'stu_name' => 'RAO', 'stu_sex' => '女性', 'stu_birthday' => '1999-08-28', ],
-			['stu_id' => '20020009', 'stu_name' => 'SHAO', 'stu_sex' => '男性', 'stu_birthday' => '1997-05-31', ],
-			['stu_id' => '20020010', 'stu_name' => 'JOU', 'stu_sex' => '女性', 'stu_birthday' => '1998-09-12', ],
+			['stu_id' => '20020001','stu_name' => 'AUNG','stu_sex' => '男性','stu_birthday' => '1998-05-21','stu_delstatus' => '0'],
+			['stu_id' => '20020002', 'stu_name' => 'Shou', 'stu_sex' => '男性', 'stu_birthday' => '1996-05-21','stu_delstatus' => '1' ],
+			['stu_id' => '20020003', 'stu_name' => 'CHOU', 'stu_sex' => '女性', 'stu_birthday' => '1999-07-11','stu_delstatus' => '1' ],
+			['stu_id' => '20020004', 'stu_name' => 'KANG', 'stu_sex' => '男性', 'stu_birthday' => '1998-01-11','stu_delstatus' => '0' ],
+			['stu_id' => '20020005', 'stu_name' => 'UMA', 'stu_sex' => '男性', 'stu_birthday' => '1998-02-17','stu_delstatus' => '0' ],
+			['stu_id' => '20020006', 'stu_name' => 'KIN', 'stu_sex' => '女性', 'stu_birthday' => '1998-03-25','stu_delstatus' => '0' ],
+			['stu_id' => '20020007', 'stu_name' => 'CHAO', 'stu_sex' => '男性', 'stu_birthday' => '1998-06-14','stu_delstatus' => '0' ],
+			['stu_id' => '20020008', 'stu_name' => 'RAO', 'stu_sex' => '女性', 'stu_birthday' => '1999-08-28','stu_delstatus' => '1' ],
+			['stu_id' => '20020009', 'stu_name' => 'SHAO', 'stu_sex' => '男性', 'stu_birthday' => '1997-05-31','stu_delstatus' => '0' ],
+			['stu_id' => '20020010', 'stu_name' => 'JOU', 'stu_sex' => '女性', 'stu_birthday' => '1998-09-12','stu_delstatus' => '1' ],
 		];
 		//テスト結果情報
 		$testkekka = [
@@ -30,20 +30,34 @@ class ApiStudent
 			['stu_id' => '20020009', 'kokugo_point' =>'39','eigo_point' => '77','suugaku_point' => '76'],
 			['stu_id' => '20020010', 'kokugo_point' =>'68','eigo_point' => '56','suugaku_point' => '36'],
 		];
-		
+
+		$stu_data = [];
+		//学生マスタ情報を$stu_dataにセットする
+		foreach($student as $key => $value){
+			if($_GET['check_status'] == 0 && $value['stu_delstatus'] == '1'){//全表示ではない場合、退学した学生（stu_delstatus=1）の情報を削除し、$stu_dataにセットしない
+				unset($student[$key]);
+				continue;
+			}
+			$stu_data[] = $value;
+		}
 		//学籍番号＝＞名前の連想配列を作成する
 		$stu_nameList = array_column($student, 'stu_name', 'stu_id');
 		//error_log(print_r($stu_nameList,true));
 
 		//作成された連想配列を参照し、学籍番号に該当する名前をtestkekkaにセットする
-		$kekka = [];
+		$testkekka_data = [];
 		foreach($testkekka as $key => $value){
+			error_log(print_r(isset($stu_nameList[$value['stu_id']]),true));
+			if(isset($stu_nameList[$value['stu_id']]) == false){//退学した学生はtestkekkaにセットしない
+				continue;
+			} 
 			$value['stu_name'] = $stu_nameList[$value['stu_id']];
-			$kekka[] = $value;		
+			$testkekka_data[] = $value;
 	    }
+		//画面に返却するデータをセット
 		$result = [
-			'stu_data'       => $student,
-			'testkekka_data' => $kekka
+			'stu_data'       => $stu_data,
+			'testkekka_data' => $testkekka_data
 		];
 		return json_encode($result, JSON_UNESCAPED_UNICODE);
 	}

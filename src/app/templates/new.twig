@@ -1,5 +1,41 @@
 {% include 'base.html' %}
 <script>
+var mylayout ={
+    id:"form",
+    view:"form",
+    //scroll:true,
+    elements:[
+        {cols:[
+        {view:"datatable",
+            id:"stu_ichiran",
+            autoheight:true, 
+        columns:[
+            {id:"stu_id", header:"学籍番号"},
+            {id:"stu_name", header:"名前"},
+            {id:"stu_sex", header:"性別"},
+            {id:"stu_birthday", header:"誕生日"},
+        ]},
+        {view:"datatable",
+            id:"kekka_ichiran",
+            autoheight:true,     
+        columns:[
+            {id:"stu_id", header:"学籍番号"},
+            {id:"stu_name", header:"名前"},
+            {id:"kokugo_point", header:"国語"},
+            {id:"eigo_point", header:"英語"},
+            {id:"suugaku_point", header:"数学"},
+        ]},
+        {view:"checkbox", 
+        id:"chbox_change", 
+        label:"全表示", 
+        value:0
+        },
+        ],
+        }
+    ]   
+};
+
+
 var stu_datatable = {
 	 	 view:"datatable",
           id:"stu_ichiran",      
@@ -23,29 +59,43 @@ var testkekka_datatable = {
       ]
 	};
 var checkbox = {view:"checkbox", 
-    id:"change", 
+    id:"chbox_change", 
     label:"全表示", 
-    value:0}
+    value:0};
 
-var logic = {
-		init: function() {
-			$.get("ApiStudent", "", function(data) {
-				//console.log(data);
+
+var logic ={
+        init: function() {//初期処理
+            $$("chbox_change").attachEvent("onChange", logic.showChange);
+            $.get("ApiStudent", {check_status:0}, function(data) {
                 var jsondata = JSON.parse(data);
-				$$("stu_ichiran").parse(jsondata.stu_data);
+                console.log(jsondata);
+                $$("stu_ichiran").parse(jsondata.stu_data);
                 $$("kekka_ichiran").parse(jsondata.testkekka_data);
-			});
+            });
+        },
+        showChange: function(newvalue){ //全表示チェックボックス押下処理。　newvalue:チェックボクスの最新状態　0：チェックなし(一部表示)、1：チェックあり(全表示)
+            $.get("ApiStudent", {check_status:newvalue}, function(data) {
+                var jsondata = JSON.parse(data);
+                $$("stu_ichiran").clearAll();
+                $$("kekka_ichiran").clearAll();
+                $$("stu_ichiran").parse(jsondata.stu_data);
+                $$("kekka_ichiran").parse(jsondata.testkekka_data);
+            });
 
-		},
+        },
 };
+
+
+
 
 webix.ready(function () {
 		webix.ui(
-			{cols:[
-				stu_datatable,
-                testkekka_datatable,
-                checkbox
-			]}
+			{
+                cols:[
+                    mylayout,
+                ]
+            }
 		);
 		logic.init();
 });
