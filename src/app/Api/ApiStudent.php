@@ -1,9 +1,53 @@
 <?php
+
 namespace App\Api;
+
+use Slim\Views\Twig as View;
+
 class ApiStudent
 {
-	public function init ($request, $response)
+	protected $views;
+	protected $pdo;
+	const SEX = [
+		0 => '男性',
+		1 => '女性'
+	];
+	public function __construct(View $views)
 	{
+		 $this->views = $views;
+		 $dsn = 'mysql:dbname=jule;host=localhost:3306';
+		 $servername = 'root';
+		 $password = 'Aaaa1234*';
+		 $dbname = 'jule';
+			try {
+			 $this->pdo = new \PDO($dsn, $servername, $password);
+			 error_log(print_r($this->pdo,true));
+		 } catch (\PDOException $e) {
+			 echo 'Connection failed: ' . $e->getMessage();
+			 error_log(print_r($e,true));
+		 }
+	}
+	public function init($request, $response)
+	{
+		$sql = "SELECT * FROM student ";
+		$stmt = $this->pdo->prepare($sql);
+		$stmt->execute();
+		while($row = $stmt->fetch(\PDO::FETCH_ASSOC)){
+			foreach($row as $key => $value){
+				$newrow=[
+					'stu_id' => $row['id'],
+					'stu_name' => $row['name'],
+					'stu_sex' => self::SEX[$row['sex']],
+					'stu_birthday' => $row['birthday'],
+				];
+			}
+			$stu_data[] = $newrow;
+		}
+
+		// 接続を閉じる
+		$this->pdo = null;
+		$this->stmt = null;
+		error_log(print_r($row, true));
 		//学生マスタ情報
 		$student = [
 			['stu_id' => '20020001','stu_name' => 'AUNG','stu_sex' => '男性','stu_birthday' => '1998-05-21','stu_delstatus' => '0'],
@@ -53,7 +97,7 @@ class ApiStudent
 			} 
 			$value['stu_name'] = $stu_nameList[$value['stu_id']];
 			$testkekka_data[] = $value;
-	    }
+		}
 		//画面に返却するデータをセット
 		$result = [
 			'stu_data'       => $stu_data,

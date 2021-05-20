@@ -28,5 +28,5 @@ $container['ApiLogin'] = function ($container) {
 //    return new \App\Api\RunVideo($container->view);
 // };
 $container['ApiStudent'] = function ($container) {
-   return new \App\Api\ApiStudent();
+   return new \App\Api\ApiStudent($container->view);
 };
